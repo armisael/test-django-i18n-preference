@@ -24,3 +24,33 @@ test now passes.
 
 Interestingly, by removing `Plural-Forms` from this project's `django.po` (and recompiling the messages) the test passes.
 As another hint, if we instead add `Plural-Forms` to `django-extensions`'s `django.po`, the test also passes.
+
+## Installation
+
+```bash
+# clone
+git clone git@github.com:armisael/test-django-i18n-preference.git
+cd test-django-i18n-preference
+
+# install deps
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# setup
+cd mysite
+./manage.py compilemessages
+
+# test #1 KO: the wrong translation is picked
+./manage.py test
+
+# test #2 OK: by removing django_extensions from INSTALLED_APPS the correct translation is picked
+sed -i /django_extensions/d mysite/settings.py
+./manage.py test
+
+# test #3 OK: by removing Plural-Forms from django.po the correct translation is picked
+git checkout .
+sed -i /Plural-Forms/d locale/it/LC_MESSAGES/django.po
+./manage.py compilemessages
+./manage.py test
+```
